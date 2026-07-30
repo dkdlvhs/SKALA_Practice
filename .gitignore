@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# Java
+*.class
+
+# Gradle
+.gradle/
+build/
+
+# Maven
+target/
+
+# 환경 변수 및 보안 파일
+.env
+.env.*
+application-secret.yml
+application-secret.properties
+
+# 로그
+*.log
+logs/

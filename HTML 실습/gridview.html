@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-areas: 'header header' 'menu content' 'footer footer';
+  gap: 10px;
+}
+
+.header { grid-area: header; background-color: purple; color: white; text-align: center; padding: 10px; }
+.menu { grid-area: menu; background-color: #33b5e5; color: white; padding: 10px; }
+.content { grid-area: content; padding: 10px; }
+.footer { grid-area: footer; background-color: #0099cc; color: white; text-align: center; padding: 10px; }
+</style>
+</head>
+<body>
+
+<div class="grid-container">
+  <div class="header"><h1>My Page</h1></div>
+  <div class="menu">Menu</div>
+  <div class="content"><p>Main content goes here.</p></div>
+  <div class="footer"><p>Footer</p></div>
+</div>
+
+</body>
+</html>

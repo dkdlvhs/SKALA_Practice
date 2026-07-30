@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    for (let x = 2; x <= 9; x++) {
+        console.log("====" + x + "단====");
+
+        for (let y = 1; y <= 9; y++) {
+            console.log(x + " x " + y + " = " + (x * y));
+        }
+    }
+
+    function findMinMax(numbers) {
+        return console.log("최솟값: " + Math.min(...numbers) + ", 최댓값: " + Math.max(...numbers));
+    }
+
+    const numbers = [10, 25,7, 33, 15, 2, 40];
+    console.log("입력 배열: " + numbers);
+    findMinMax(numbers);
+</script>
+</html>

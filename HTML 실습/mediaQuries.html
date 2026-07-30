@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { box-sizing: border-box; }
+
+.row::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.column {
+  float: left;
+  width: 25%;
+  padding: 15px;
+  background-color: #f1f1f1;
+  border: 1px solid lightgray;
+}
+
+@media (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .column {
+    width: 50%;
+  }
+}
+
+
+
+/* @media for max-width 600px */
+</style>
+</head>
+<body>
+
+<div class="row">
+  <div class="column">Col 1</div>
+  <div class="column">Col 2</div>
+  <div class="column">Col 3</div>
+  <div class="column">Col 4</div>
+</div>
+
+</body>
+</html>

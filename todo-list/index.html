@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TodoList 실습</title>
+
+  <!-- CSS 파일 연결 -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- JavaScript 파일 연결 -->
+  <!-- defer는 HTML을 먼저 읽은 뒤 JavaScript를 실행하게 한다. -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="container">
+    <h1>TodoList</h1>
+    <p class="description">오늘 해야 할 일을 입력하고 관리해 봅니다.</p>
+
+    <!-- 할 일 입력 폼 -->
+    <form id="todoForm" class="todo-form">
+      <input
+        type="text"
+        id="todoInput"
+        placeholder="할 일을 입력하세요"
+        autocomplete="off"
+      >
+      <button type="submit">추가</button>
+    </form>
+
+    <!-- 할 일 목록이 출력될 영역 -->
+    <ul id="todoList" class="todo-list"></ul>
+
+    <!-- 목록이 비어 있을 때 표시되는 영역 -->
+    <div id="emptyMessage" class="empty-message" role="status">
+      <span class="empty-icon" aria-hidden="true">✓</span>
+      <p>목록이 비어 있습니다</p>
+      <small>새로운 할 일을 추가해 보세요.</small>
+    </div>
+
+    <!-- 할 일 현황이 표시될 영역 -->
+    <section class="todo-summary" aria-label="할 일 현황" aria-live="polite">
+      <div class="summary-item">
+        <span class="summary-label">전체</span>
+        <strong id="totalCount" class="summary-count">0</strong>
+      </div>
+      <div class="summary-item completed">
+        <span class="summary-label">완료</span>
+        <strong id="completedCount" class="summary-count">0</strong>
+      </div>
+      <div class="summary-item remaining">
+        <span class="summary-label">남은 일</span>
+        <strong id="remainingCount" class="summary-count">0</strong>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

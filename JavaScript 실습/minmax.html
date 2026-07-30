@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>최소값과 최댓값 찾기</h1>
+
+    <p>숫자를 쉼표(,)로 구분하여 입력하세요.</p>
+    <input type="text" id="numbersInput" placeholder="예: 10, 25, 7, 33, 15, 2, 40">
+    <button id="findButton">실행</button>
+</body>
+
+<script>
+    function findMinMax(numbers) {
+        const min = Math.min(...numbers);
+        const max = Math.max(...numbers);
+        return { min, max };
+    }
+
+    document.getElementById("findButton").addEventListener("dblclick", () => {
+        const input = document.getElementById("numbersInput").value;
+        const numbers = input.split(",").map(num => parseFloat(num.trim())).filter(num => !isNaN(num));
+
+        if (numbers.length === 0) {
+            alert("유효한 숫자를 입력하세요.");
+            return;
+        }
+
+        const result = findMinMax(numbers);
+        alert("최솟값: " + result.min + ", 최댓값: " + result.max);
+    });
+</script>
+</html>
