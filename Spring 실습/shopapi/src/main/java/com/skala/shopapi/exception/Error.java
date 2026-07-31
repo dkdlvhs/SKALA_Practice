@@ -1,0 +1,12 @@
+package com.skala.shopapi.exception;
+
+public enum Error {
+    SUCCESS,
+    DATA_NOT_FOUND,
+    DATADUPLICATED,
+    INVALID_INPUT,
+    NOT_AUTHENTICATED,
+    NOT_AUTHORIZED,
+    INSUFFICIENTFUNDS,
+    INSUFFICIENTQUANTITY
+}
