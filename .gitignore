@@ -12,6 +12,10 @@ out/
 # Java
 *.class
 
+# Python
+venv/
+.venv/
+
 # Gradle
 .gradle/
 build/
