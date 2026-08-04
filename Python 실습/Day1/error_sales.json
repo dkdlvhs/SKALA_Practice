@@ -1,0 +1,25 @@
+[
+  {
+    "row": 16,
+    "data": {
+      "region": "대구",
+      "category": "식품",
+      "amount": -1,
+      "month": "2024-04"
+    },
+    "error": [
+      {
+        "type": "greater_than",
+        "loc": [
+          "amount"
+        ],
+        "msg": "Input should be greater than 0",
+        "input": -1,
+        "ctx": {
+          "gt": 0.0
+        },
+        "url": "https://errors.pydantic.dev/2.12/v/greater_than"
+      }
+    ]
+  }
+]

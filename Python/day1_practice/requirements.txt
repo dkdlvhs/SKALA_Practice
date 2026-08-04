@@ -1,7 +1,0 @@
-httpx
-pydantic>=2
-pandas
-pyarrow
-pytest
-ruff
-

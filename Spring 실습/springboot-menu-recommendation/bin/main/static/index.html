@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘 뭐 먹지?</title>
+    <title>🍽️ 오늘 뭐 먹지?</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -61,6 +61,56 @@
             font-size: 14px;
             color: #6b7280;
         }
+        .task-panel {
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, .08);
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .panel-header button {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 14px;
+        }
+        .panel-content {
+            display: grid;
+            gap: 16px;
+        }
+        .option-buttons {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+        .price-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            align-items: center;
+        }
+        .price-inputs label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 14px;
+            color: #334155;
+        }
+        .price-inputs input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+        }
         #result {
             min-height: 90px;
             margin-top: 24px;
@@ -97,28 +147,168 @@
     </p>
 
     <div class="buttons">
-        <button class="task" data-task="1" data-url="/api/menu/weather/rainy">① 날씨별 추천</button>
-        <button class="task" data-task="2" data-url="/api/menu/mood/happy">② 기분별 추천</button>
-        <button class="task" data-task="3" data-url="/api/menu/price/search?min=5000&max=10000">③ 가격대별 추천</button>
-        <button class="task" data-task="4" data-url="/api/menu/my/solo">④ 나만의 추천</button>
+        <button class="task" data-task="1" id="weather-task">① 날씨별 추천</button>
+        <button class="task" data-task="2" id="mood-task">② 기분별 추천</button>
+        <button class="task" data-task="3" id="price-task">③ 가격대별 추천</button>
+        <button class="task" data-task="4" id="combination-task" data-url="/api/menu/combination">④ 추천 메뉴 조합</button>
+    </div>
+
+    <div id="task-panel" class="task-panel" hidden>
+        <div class="panel-header">
+            <strong id="panel-title"></strong>
+            <button id="panel-close" type="button">닫기</button>
+        </div>
+        <div id="panel-content" class="panel-content"></div>
     </div>
 
     <div id="result">결과가 여기에 표시됩니다.</div>
 </main>
 <script>
     const result = document.getElementById("result");
+    const taskPanel = document.getElementById("task-panel");
+    const panelTitle = document.getElementById("panel-title");
+    const panelContent = document.getElementById("panel-content");
+    const panelClose = document.getElementById("panel-close");
+    const weatherTask = document.getElementById("weather-task");
+    const moodTask = document.getElementById("mood-task");
+    const priceTask = document.getElementById("price-task");
 
-    document.querySelectorAll("button").forEach((button) => {
+    function openTaskPanel(title, contentHtml) {
+        panelTitle.textContent = title;
+        panelContent.innerHTML = contentHtml;
+        taskPanel.hidden = false;
+    }
+
+    function closeTaskPanel() {
+        taskPanel.hidden = true;
+        panelContent.innerHTML = "";
+    }
+
+    function normalizeResultText(text) {
+        return text
+            .replace(/^(sunny|rainy|snowy|happy|sad|angry)\s*/i, "")
+            .replace(/^([ \t]+|\n)+/, "")
+            .replace(/\s{2,}/g, " ")
+            .trim();
+    }
+
+    async function sendRequest(url, prefix = "") {
+        result.textContent = "요청 중...";
+
+        try {
+            const response = await fetch(url);
+            const contentType = response.headers.get("content-type") ?? "";
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            if (contentType.includes("application/json")) {
+                const data = await response.json();
+                const text = JSON.stringify(data, null, 2);
+                result.textContent = prefix ? `${prefix}\n${text}` : text;
+            } else {
+                const text = normalizeResultText(await response.text());
+                result.textContent = prefix ? `${prefix} ${text}` : text;
+            }
+        } catch (error) {
+            result.textContent = `오류: ${error.message}`;
+        }
+    }
+
+    function attachOptionHandlers() {
+        panelContent.querySelectorAll("button[data-url]").forEach((button) => {
+            const prefix = button.textContent.trim();
+            button.addEventListener("click", () => sendRequest(button.dataset.url, prefix));
+        });
+
+        const priceSubmit = panelContent.querySelector("#price-submit");
+        if (priceSubmit) {
+            priceSubmit.addEventListener("click", () => {
+                const min = panelContent.querySelector("#price-min").value;
+                const max = panelContent.querySelector("#price-max").value;
+                if (!min || !max) {
+                    result.textContent = "최소값과 최대값을 모두 입력해주세요.";
+                    return;
+                }
+                if (Number(min) > Number(max)) {
+                    result.textContent = "최소값이 최대값보다 작아야 합니다.";
+                    return;
+                }
+                sendRequest(`/api/menu/price/search?min=${min}&max=${max}`, "💰 가격대별 추천");
+            });
+        }
+    }
+
+    function showWeatherOptions() {
+        openTaskPanel(
+            "날씨별 추천",
+            `
+                <p class="hint">원하는 날씨를 선택해 보세요.</p>
+                <div class="buttons option-buttons">
+                    <button data-url="/api/menu/weather/sunny">☀️ 맑음</button>
+                    <button data-url="/api/menu/weather/rainy">🌧️ 비</button>
+                    <button data-url="/api/menu/weather/snowy">❄️ 눈</button>
+                </div>
+            `
+        );
+        attachOptionHandlers();
+    }
+
+    function showMoodOptions() {
+        openTaskPanel(
+            "기분별 추천",
+            `
+                <p class="hint">현재 기분에 맞는 메뉴를 선택하세요.</p>
+                <div class="buttons option-buttons">
+                    <button data-url="/api/menu/mood/happy">😊 행복</button>
+                    <button data-url="/api/menu/mood/sad">😢 슬픔</button>
+                    <button data-url="/api/menu/mood/angry">😡 화남</button>
+                </div>
+            `
+        );
+        attachOptionHandlers();
+    }
+
+    function showPriceOptions() {
+        openTaskPanel(
+            "가격대별 추천",
+            `
+                <p class="hint">최소, 최대 가격을 입력하고 추천을 받아보세요.</p>
+                <div class="price-inputs">
+                    <label>최소 <input id="price-min" type="number" min="0" value="5000"></label>
+                    <label>최대 <input id="price-max" type="number" min="0" value="10000"></label>
+                </div>
+                <button id="price-submit" class="task">추천 요청</button>
+            `
+        );
+        attachOptionHandlers();
+    }
+
+    panelClose.addEventListener("click", closeTaskPanel);
+    weatherTask.addEventListener("click", showWeatherOptions);
+    moodTask.addEventListener("click", showMoodOptions);
+    priceTask.addEventListener("click", showPriceOptions);
+    const combinationTask = document.getElementById("combination-task");
+    if (combinationTask) {
+        combinationTask.addEventListener("click", () => {
+            closeTaskPanel();
+            sendRequest(combinationTask.dataset.url);
+        });
+    }
+
+    document.querySelectorAll("button[data-url]").forEach((button) => {
         button.addEventListener("click", async () => {
-            result.textContent = "요청 중...";
-
             const url = button.dataset.url;
+            if (!url) {
+                return;
+            }
+            result.textContent = "요청 중...";
 
             try {
                 const response = await fetch(url);
                 const contentType = response.headers.get("content-type") ?? "";
 
-                // 실습과제 버튼인데 API가 아직 없으면(404) 안내 문구를 보여줍니다.
                 if (response.status === 404 && button.dataset.task) {
                     result.textContent =
                         `아직 만들지 않은 API입니다. (실습과제 ${button.dataset.task}번)\n\n`
